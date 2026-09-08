@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="لعبة تعليمية تفاعلية في إعراب الفعل المضارع بثلاثة مستويات مع شهادة إنجاز.">
+<title>مغامرة إعراب الفعل المضارع</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Tahoma","Arial",sans-serif;background:linear-gradient(135deg,#eef6ff,#fff1f7 55%,#f4efff);color:#24324a}
+.app{max-width:1000px;margin:auto;padding:24px}.hero{background:linear-gradient(135deg,#4b70e2,#8c5bd9);color:#fff;border-radius:28px;padding:28px;box-shadow:0 15px 35px #44508025}
+.hero h1{margin:0 0 8px;font-size:34px}.hero p{margin:0;opacity:.92;font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:#fff;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 22px #4b5d7b14}.stat b{display:block;font-size:24px;color:#4b70e2}.stat span{font-size:13px;color:#6d7890}
+.card{background:#fff;border-radius:25px;padding:25px;box-shadow:0 10px 30px #4b5d7b18}.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.level{border:2px solid #e4e9f5;border-radius:20px;padding:18px;cursor:pointer;transition:.2s;background:#fff}.level:hover{transform:translateY(-2px)}.level.active{border-color:#4b70e2;background:#f1f5ff}.level.locked{opacity:.55;cursor:not-allowed}.level .icon{font-size:28px}.level h3{margin:7px 0 4px}.level small{color:#758097}
+.bar{height:10px;background:#edf0f7;border-radius:10px;overflow:hidden;margin:12px 0 20px}.fill{height:100%;background:linear-gradient(90deg,#4b70e2,#bd63d5);width:0;transition:.3s}
+.qnum{color:#6f7890;font-size:14px}.question{font-size:24px;font-weight:700;line-height:1.7;margin:12px 0 22px}.choices{display:grid;gap:12px}.choice{border:2px solid #e1e6f0;background:#fff;padding:15px 17px;border-radius:15px;text-align:right;font-size:17px;cursor:pointer;transition:.15s}.choice:hover{border-color:#8c5bd9;background:#faf8ff}.choice.correct{border-color:#25a66a;background:#e9fff4}.choice.wrong{border-color:#e85b6d;background:#fff0f2}.choice:disabled{cursor:default}
+.feedback{margin-top:18px;padding:15px;border-radius:15px;display:none;line-height:1.7}.feedback.show{display:block}.feedback.ok{background:#e9fff4;color:#176c48}.feedback.no{background:#fff0f2;color:#9a3042}
+.actions{display:flex;gap:10px;margin-top:18px;justify-content:space-between;align-items:center}.btn{border:0;border-radius:14px;padding:12px 20px;font-size:16px;font-weight:700;cursor:pointer;background:#4b70e2;color:#fff}.btn.secondary{background:#edf1fb;color:#42506a}.btn:disabled{opacity:.45;cursor:not-allowed}
+.start{text-align:center;padding:30px}.start .big{font-size:64px}.start h2{font-size:28px}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:right;margin:20px 0}.rule{background:#f7f8fc;border-radius:16px;padding:15px}.hidden{display:none}.result{text-align:center;padding:30px}.badge{font-size:64px}.result h2{font-size:30px}.result .score{font-size:46px;color:#4b70e2;font-weight:800}.mini{font-size:13px;color:#778199}
+@media(max-width:700px){.stats,.levels,.rules{grid-template-columns:1fr 1fr}.question{font-size:20px}.hero h1{font-size:27px}}@media(max-width:480px){.stats,.levels,.rules{grid-template-columns:1fr}.app{padding:12px}}
+@media print{
+  body *{visibility:hidden}
+  #certificate,#certificate *{visibility:visible}
+  #certificate{position:absolute;left:0;top:0;width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<section class="hero">
+  <h1>🧭 مغامرة إعراب الفعل المضارع</h1>
+  <p>ثلاثة مستويات متدرجة — اختاري الإجابة، واحصلي على تغذية راجعة فورية، واجمعي أكبر عدد من النقاط!</p><div style="margin-top:12px;font-size:15px;font-weight:700;opacity:.95">✦ تصميم وإعداد: المعلمة نعيمه القحطاني</div>
+</section>
+
+<div class="stats">
+ <div class="stat"><b id="score">0</b><span>النقاط</span></div>
+ <div class="stat"><b id="streak">0</b><span>الإجابات المتتالية</span></div>
+ <div class="stat"><b id="levelName">التهيئة</b><span>المستوى</span></div>
+ <div class="stat"><b id="qCounter">0/30</b><span>التقدم</span></div>
+</div>
+
+<div class="card">
+ <div id="startScreen" class="start">
+  <div class="big">👑</div><h2>هل أنتِ مستعدة لتصبحي خبيرة الإعراب؟</h2>
+  <p>ابدئي بالمستوى الأول. كل مستوى يحتوي على 10 تحديات.</p>
+  <div style="max-width:420px;margin:18px auto;text-align:right">
+    <label for="studentName" style="font-weight:700">اسم الطالبة</label>
+    <input id="studentName" type="text" placeholder="اكتبي اسمك هنا"
+      style="width:100%;margin-top:8px;padding:14px;border:2px solid #e1e6f0;border-radius:14px;font-size:17px">
+    <div id="nameError" style="display:none;color:#b63249;margin-top:7px;font-size:14px">
+      فضلاً اكتبي اسم الطالبة قبل البدء.
+    </div>
+  </div>
+  <div class="rules">
+   <div class="rule">🟢 <b>المستوى الأول</b><br>تمييز الرفع والنصب والجزم.</div>
+   <div class="rule">🟡 <b>المستوى الثاني</b><br>تحديد الأداة وعلامة الإعراب.</div>
+   <div class="rule">🔴 <b>المستوى الثالث</b><br>تحديات إعراب وتحليل.</div>
+  </div>
+  <button class="btn" onclick="startGame()">🚀 ابدئي المغامرة</button>
+ </div>
+
+ <div id="game" class="hidden">
+  <div class="levels">
+   <div id="L1" class="level active"><div class="icon">🟢</div><h3>المستوى الأول</h3><small>المستكشفة</small></div>
+   <div id="L2" class="level locked"><div class="icon">🟡</div><h3>المستوى الثاني</h3><small>المحققة</small></div>
+   <div id="L3" class="level locked"><div class="icon">🔴</div><h3>المستوى الثالث</h3><small>خبيرة الإعراب</small></div>
+  </div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="qnum" id="qnum"></div>
+  <div class="question" id="question"></div>
+  <div class="choices" id="choices"></div>
+  <div id="feedback" class="feedback"></div>
+  <div class="actions">
+   <span class="mini" id="hint"></span>
+   <button id="next" class="btn" disabled onclick="nextQuestion()">السؤال التالي ←</button>
+  </div>
+ </div>
+
+ <div id="result" class="result hidden">
+   <div class="badge" id="badge">👑</div>
+   <h2 id="resultTitle"></h2>
+
+   <div id="certificate" style="max-width:760px;margin:20px auto;padding:34px;border:7px double #4b70e2;border-radius:24px;background:linear-gradient(135deg,#fff,#f5f7ff);text-align:center">
+     <div style="font-size:15px;letter-spacing:1px;color:#6f7890">شهادة إنجاز تعليمية</div>
+     <div style="font-size:34px;font-weight:800;margin:12px 0;color:#4b70e2">مغامرة إعراب الفعل المضارع</div>
+     <div style="font-size:18px;margin:14px 0">تشهد هذه الشهادة بإتمام الطالبة</div>
+     <div id="certName" style="font-size:30px;font-weight:800;margin:12px 0"></div>
+     <div style="font-size:18px">للمستويات الثلاثة في إعراب الفعل المضارع</div>
+
+     <div style="display:flex;justify-content:center;gap:35px;flex-wrap:wrap;margin:24px 0">
+       <div><b style="font-size:30px;color:#4b70e2" id="certScore"></b><br><span class="mini">الدرجة</span></div>
+       <div><b style="font-size:30px;color:#4b70e2" id="certPercent"></b><br><span class="mini">نسبة الإتقان</span></div>
+       <div><b style="font-size:30px;color:#4b70e2" id="certRank"></b><br><span class="mini">الرتبة</span></div>
+     </div>
+
+     <div id="certDate" class="mini"></div><div style="margin-top:18px;font-size:14px;font-weight:700;color:#4b70e2">إعداد وتصميم المعلمة نعيمه القحطاني</div>
+   </div>
+
+   <p id="resultText"></p>
+   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+     <button class="btn" onclick="printCertificate()">🖨️ طباعة / حفظ الشهادة PDF</button>
+     <button class="btn secondary" onclick="location.reload()">🔄 إعادة اللعب</button>
+   </div>
+ </div>
+</div>
+</div>
+<script>
+const questions=[
+/* L1 */
+{l:1,q:"ما إعراب الفعل «يكتبُ» في: «الطالبُ يكتبُ واجبه»؟",a:["مرفوع","منصوب","مجزوم"],c:0,e:"لم تسبقه أداة نصب أو جزم، لذلك هو فعل مضارع مرفوع."},
+{l:1,q:"ما إعراب «لن يهملَ»؟",a:["مرفوع","منصوب","مجزوم"],c:1,e:"«لن» من أدوات نصب الفعل المضارع، لذا «يهملَ» منصوب."},
+{l:1,q:"ما إعراب «لم يخرجْ»؟",a:["مرفوع","منصوب","مجزوم"],c:2,e:"«لم» من أدوات جزم المضارع، لذا «يخرجْ» مجزوم."},
+{l:1,q:"«يسعى الطالبُ إلى النجاح». إعراب «يسعى»؟",a:["مرفوع","منصوب","مجزوم"],c:0,e:"لم يسبقه ناصب أو جازم؛ فهو مضارع مرفوع."},
+{l:1,q:"«لن يتأخرَ المجتهدُ». علامة نصب «يتأخرَ»؟",a:["الفتحة","الضمة","السكون"],c:0,e:"الفعل صحيح الآخر، وعلامة نصبه الفتحة الظاهرة."},
+{l:1,q:"«لم يلعبْ الطفلُ». علامة جزم «يلعبْ»؟",a:["الفتحة","السكون","حذف النون"],c:1,e:"الفعل صحيح الآخر، وعلامة جزمه السكون."},
+{l:1,q:"أي جملة تحتوي فعلًا مضارعًا مجزومًا؟",a:["لن ينسى الطالبُ","لم ينسَ الطالبُ","الطالبُ ينسى"],c:1,e:"«لم» جزمت «ينسَ»، وهو معتل الآخر."},
+{l:1,q:"أي أداة من الآتي تنصب المضارع؟",a:["لم","لن","لا الناهية"],c:1,e:"«لن» حرف نصب، أما «لم» و«لا الناهية» فمن أدوات الجزم."},
+{l:1,q:"أي أداة من الآتي تجزم المضارع؟",a:["أن","لن","لم"],c:2,e:"«لم» حرف جزم."},
+{l:1,q:"«أن تتعلموا»؛ ما حالة الفعل؟",a:["مرفوع","منصوب","مجزوم"],c:1,e:"«أن» حرف نصب، و«تتعلموا» فعل مضارع منصوب."},
+
+/* L2 */
+{l:2,q:"«لن يدعوَ المؤمنُ إلى الشر». علامة نصب «يدعوَ»؟",a:["الفتحة الظاهرة","الفتحة المقدرة","حذف النون"],c:0,e:"«يدعوَ» منصوب، وعلامة نصبه الفتحة الظاهرة على الواو."},
+{l:2,q:"«لن ينجحَ الكسولُ». أعربي «ينجحَ»؟",a:["مضارع منصوب بالفتحة","مضارع مجزوم بالسكون","مضارع مرفوع بالضمة"],c:0,e:"سبقته «لن»، فهو منصوب بالفتحة الظاهرة."},
+{l:2,q:"«الطالباتُ يكتبنَ الدرسَ». ما علامة إعراب «يكتبنَ»؟",a:["الضمة","السكون","مبني في محل رفع"],c:2,e:"الفعل المضارع المتصل بنون النسوة مبني على السكون في محل رفع."},
+{l:2,q:"«الطلابُ يكتبونَ». علامة رفع «يكتبونَ»؟",a:["الضمة","ثبوت النون","الواو"],c:1,e:"من الأفعال الخمسة، ويرفع بثبوت النون."},
+{l:2,q:"«لن تهمليَ واجبكِ» (الفعل من الأفعال الخمسة). علامة نصبه؟",a:["الفتحة","حذف النون","السكون"],c:1,e:"الأفعال الخمسة تنصب بحذف النون."},
+{l:2,q:"«لم تكتبا الدرسَ». علامة جزم «تكتبا»؟",a:["حذف النون","السكون","الفتحة"],c:0,e:"«تكتبان» من الأفعال الخمسة، وعند الجزم تحذف النون."},
+{l:2,q:"«لن يسعىَ الطالبُ للخطأ»؛ ما السبب في نصب المضارع؟",a:["سبقته لن","سبقته لم","لم يسبقه شيء"],c:0,e:"«لن» حرف نصب."},
+{l:2,q:"«لم يرمِ اللاعبُ الكرةَ». علامة الجزم؟",a:["السكون","حذف حرف العلة","حذف النون"],c:1,e:"الفعل «يرمي» معتل الآخر بالياء، ويجزم بحذف حرف العلة."},
+{l:2,q:"«كي تتفوقيَ» من الأفعال الخمسة. علامة النصب؟",a:["حذف النون","الفتحة","السكون"],c:0,e:"«كي» تنصب المضارع، والأفعال الخمسة تنصب بحذف النون."},
+{l:2,q:"أي مجموعة تمثل أدوات نصب المضارع؟",a:["أن، لن، كي","لم، لا الناهية، لام الأمر","هل، قد، سوف"],c:0,e:"«أن، لن، كي» من أشهر أدوات نصب المضارع."},
+
+/* L3 */
+{l:3,q:"أعربي: «لن يضيّعَ الطالبُ وقته».",a:["مرفوع بالضمة","منصوب بالفتحة الظاهرة","مجزوم بالسكون"],c:1,e:"«لن» ناصبة، و«يضيّعَ» فعل مضارع منصوب بالفتحة الظاهرة."},
+{l:3,q:"أعربي: «لم يسعَ المهملُ إلى النجاح».",a:["مجزوم بحذف حرف العلة","منصوب بالفتحة","مرفوع بالضمة"],c:0,e:"«يسعى» معتل الآخر بالألف، وجزمه يكون بحذف حرف العلة."},
+{l:3,q:"أعربي: «الطالبان يدرسانِ».",a:["مرفوع بثبوت النون","منصوب بحذف النون","مجزوم بالسكون"],c:0,e:"«يدرسان» من الأفعال الخمسة، وهو مرفوع بثبوت النون."},
+{l:3,q:"أعربي: «لن تكتبا الإجابةَ».",a:["منصوب بحذف النون","مرفوع بثبوت النون","مجزوم بحذف النون"],c:0,e:"«لن» تنصب، و«تكتبان» من الأفعال الخمسة؛ لذلك ينصب بحذف النون."},
+{l:3,q:"أعربي: «لا تهملْ واجبك».",a:["مضارع مجزوم بالسكون","مضارع منصوب بالفتحة","مضارع مرفوع بالضمة"],c:0,e:"«لا» هنا ناهية جازمة، و«تهملْ» صحيح الآخر مجزوم بالسكون."},
+{l:3,q:"أي تحليل صحيح: «لن يفوزَ من لا يجتهدْ»؟",a:["يفوزَ منصوب، يجتهدْ مجزوم","كلاهما مرفوع","يفوزَ مجزوم، يجتهدْ منصوب"],c:0,e:"«لن» نصبت «يفوزَ»، و«لا» الناهية جازمة في السياق المختار فتجزم «يجتهدْ»."},
+{l:3,q:"في «أن تدرسيَ جيدًا» ما علامة النصب؟",a:["الفتحة","حذف النون","حذف حرف العلة"],c:1,e:"«تدرسين» من الأفعال الخمسة، وينصب بحذف النون."},
+{l:3,q:"أي جملة اشتملت على مضارع مبني؟",a:["الطالبُ يقرأُ","الطالباتُ يقرأنَ","لن يقرأَ الطالب"],c:1,e:"«يقرأنَ» اتصل بنون النسوة، فهو مبني على السكون في محل رفع."},
+{l:3,q:"اختاري الإعراب الأدق لـ«لم يدعُ المؤمنُ إلى الشر».",a:["مجزوم بحذف حرف العلة","مجزوم بالسكون","منصوب بحذف النون"],c:0,e:"«يدعو» معتل الآخر بالواو، وعند الجزم يحذف حرف العلة."},
+{l:3,q:"تحدي الخبراء: «لن تكونوا مهملين». ما إعراب «تكونوا»؟",a:["مضارع منصوب بحذف النون","مضارع مرفوع بثبوت النون","مضارع مجزوم بحذف النون"],c:0,e:"«لن» ناصبة، و«تكونون» من الأفعال الخمسة؛ وعلامة نصبه حذف النون."}
+];
+
+let idx=0,score=0,streak=0,answered=false,levelUnlocked=1,studentName="";
+const $=id=>document.getElementById(id);
+function startGame(){
+ studentName=$("studentName").value.trim();
+ if(!studentName){
+   $("nameError").style.display="block";
+   $("studentName").focus();
+   return;
+ }
+ $("nameError").style.display="none";
+ $("startScreen").classList.add("hidden");
+ $("game").classList.remove("hidden");
+ render();
+}
+function current(){return questions[idx]}
+function render(){
+ const q=current(), level=q.l;
+ $("levelName").textContent=["","المستكشفة","المحققة","الخبيرة"][level];
+ $("qCounter").textContent=(idx+1)+"/30";
+ $("qnum").textContent=`التحدي ${((idx)%10)+1} من 10 — المستوى ${level}`;
+ $("question").textContent=q.q;
+ $("fill").style.width=((idx)/30*100)+"%";
+ $("choices").innerHTML="";
+ $("feedback").className="feedback"; $("feedback").innerHTML="";
+ $("next").disabled=true; answered=false;
+ $("hint").textContent= level===1?"💡 تذكري: لا ناصب ولا جازم = مرفوع":level===2?"💡 انتبهي للأفعال الخمسة والمعتل الآخر":"💡 حددي الأداة ثم العلامة";
+ [1,2,3].forEach(n=>$("L"+n).className="level "+(n===level?"active ":"")+(n>levelUnlocked?"locked":""));
+ q.a.forEach((txt,i)=>{let b=document.createElement("button");b.className="choice";b.textContent=String.fromCharCode(0x627+i)+") "+txt;b.onclick=()=>answer(i,b);$("choices").appendChild(b)});
+}
+function answer(i,btn){
+ if(answered)return; answered=true;
+ const q=current(), buttons=[...document.querySelectorAll(".choice")];
+ buttons.forEach(b=>b.disabled=true);
+ if(i===q.c){score+=10;streak++;btn.classList.add("correct");$("feedback").className="feedback show ok";$("feedback").innerHTML="🎉 <b>أحسنتِ!</b> "+q.e+(streak>=3?"<br>🔥 سلسلة رائعة! +10 نقاط للإجابة الصحيحة.":"");}
+ else {streak=0;btn.classList.add("wrong");buttons[q.c].classList.add("correct");$("feedback").className="feedback show no";$("feedback").innerHTML="💡 <b>ليست الإجابة الصحيحة.</b> "+q.e+"<br>الإجابة الصحيحة: <b>"+q.a[q.c]+"</b>";score=Math.max(0,score-2);}
+ $("score").textContent=score;$("streak").textContent=streak;$("next").disabled=false;
+}
+function nextQuestion(){
+ idx++;
+ if(idx===10){levelUnlocked=2; alert("🌟 رائع! فتحتِ المستوى الثاني.");}
+ if(idx===20){levelUnlocked=3; alert("🏆 مذهل! فتحتِ مستوى خبيرة الإعراب.");}
+ if(idx>=questions.length){finish();return}
+ render();
+}
+function finish(){
+ $("game").classList.add("hidden");
+ $("result").classList.remove("hidden");
+
+ const percent=Math.round((score/300)*100);
+ $("certName").textContent=studentName;
+ $("certScore").textContent=score+" / 300";
+ $("certPercent").textContent=percent+"%";
+
+ let title,text,b,rank;
+ if(score>=270){
+   title="👑 ملكة الإعراب"; text="إتقان استثنائي! أنتِ جاهزة لتحديات نحوية أكبر."; b="👑"; rank="ملكة الإعراب";
+ } else if(score>=220){
+   title="🥇 خبيرة الإعراب"; text="مستوى رائع جدًا، مع بعض اللمسات البسيطة وتصبحين متقنة تمامًا."; b="🥇"; rank="خبيرة الإعراب";
+ } else if(score>=160){
+   title="🥈 محققة الإعراب"; text="أداء جميل! راجعي علامات الإعراب وسترتفع نتيجتك أكثر."; b="🥈"; rank="محققة الإعراب";
+ } else {
+   title="🥉 متدربة الإعراب"; text="بداية ممتازة. أعيدي المغامرة وحاولي رفع نقاطك."; b="🥉"; rank="متدربة الإعراب";
+ }
+
+ $("resultTitle").textContent=title;
+ $("resultText").textContent=text;
+ $("badge").textContent=b;
+ $("certRank").textContent=rank;
+ $("certDate").textContent="تاريخ الإنجاز: "+new Date().toLocaleDateString("ar-SA",{year:"numeric",month:"long",day:"numeric"});
+}
+
+function printCertificate(){
+ const cert=document.getElementById("certificate").innerHTML;
+ const safeName=studentName.replace(/[<>]/g,"");
+ const w=window.open("","_blank");
+ if(!w){
+   alert("يرجى السماح بالنوافذ المنبثقة لطباعة الشهادة.");
+   return;
+ }
+ w.document.write(`<!doctype html>
+ <html lang="ar" dir="rtl">
+ <head>
+ <meta charset="utf-8">
+ <title>شهادة إنجاز - ${safeName}</title>
+ <style>
+ body{font-family:Tahoma,Arial,sans-serif;margin:0;padding:30px;background:#fff;color:#24324a}
+ .cert{max-width:980px;margin:0 auto;padding:55px;border:8px double #4b70e2;border-radius:28px;text-align:center}
+ @page{size:A4 landscape;margin:12mm}
+ @media print{
+   body{padding:0}
+   .cert{max-width:none;min-height:78vh;display:flex;flex-direction:column;justify-content:center}
+ }
+ </style>
+ </head>
+ <body>
+ <div class="cert">${cert}</div>
+ <script>window.onload=()=>window.print();<\/script>
+ <footer style="max-width:1000px;margin:18px auto 28px;padding:0 24px;text-align:center;color:#7b8495;font-family:Tahoma,Arial,sans-serif;font-size:13px">
+        نشاط تعليمي تفاعلي في إعراب الفعل المضارع
+        </footer>
+</body></html>`);
+ w.document.close();
+}
+</script>
+<footer style="max-width:1000px;margin:18px auto 28px;padding:0 24px;text-align:center;color:#7b8495;font-family:Tahoma,Arial,sans-serif;font-size:13px">
+        نشاط تعليمي تفاعلي في إعراب الفعل المضارع
+        </footer>
+</body>
+</html>
